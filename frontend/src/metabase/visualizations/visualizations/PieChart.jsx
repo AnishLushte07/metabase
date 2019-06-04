@@ -236,6 +236,7 @@ export default class PieChart extends Component {
         value: row[metricIndex],
         percentage: row[metricIndex] / total,
         color: settings["pie._colors"][row[dimensionIndex]],
+        redirectUrl: row[0],
       }))
       .partition(d => d.percentage > sliceThreshold)
       .value();
@@ -388,33 +389,35 @@ export default class PieChart extends Component {
             <svg className={styles.Donut + " m1"} viewBox="0 0 100 100">
               <g ref="group" transform={`translate(50,50)`}>
                 {pie(slices).map((slice, index) => (
-                  <path
-                    key={index}
-                    d={arc(slice)}
-                    fill={slices[index].color}
-                    opacity={
-                      hovered &&
-                      hovered.index != null &&
-                      hovered.index !== index
-                        ? 0.3
-                        : 1
-                    }
-                    onMouseMove={e =>
-                      onHoverChange && onHoverChange(hoverForIndex(index, e))
-                    }
-                    onMouseLeave={() => onHoverChange && onHoverChange(null)}
-                    className={cx({
-                      "cursor-pointer": getSliceIsClickable(index),
-                    })}
-                    onClick={
-                      getSliceIsClickable(index) &&
-                      (e =>
-                        onVisualizationClick({
-                          ...getSliceClickObject(index),
-                          event: e.nativeEvent,
-                        }))
-                    }
-                  />
+                  <a href={slices[index].redirectUrl} target="_blank">
+                    <path
+                      key={index}
+                      d={arc(slice)}
+                      fill={slices[index].color}
+                      opacity={
+                        hovered &&
+                        hovered.index != null &&
+                        hovered.index !== index
+                          ? 0.3
+                          : 1
+                      }
+                      onMouseMove={e =>
+                        onHoverChange && onHoverChange(hoverForIndex(index, e))
+                      }
+                      onMouseLeave={() => onHoverChange && onHoverChange(null)}
+                      className={cx({
+                        "cursor-pointer": getSliceIsClickable(index),
+                      })}
+                      onClick={
+                        getSliceIsClickable(index) &&
+                        (e =>
+                          onVisualizationClick({
+                            ...getSliceClickObject(index),
+                            event: e.nativeEvent,
+                          }))
+                      }
+                    />
+                  </a>
                 ))}
               </g>
             </svg>
